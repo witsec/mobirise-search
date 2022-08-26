@@ -1,4 +1,4 @@
-<section class="witsec-search noindex" plugins="witsec-search" data-bg-video="{{bg.type == 'video'&&bg.value.url}}" mbr-class="{'mbr-fullscreen': fullScreen, 'mbr-parallax-background': bg.parallax}" data-wssearchhighlight="{{searchHighlight}}" data-wssearchhighlightcolor="{{searchHighlightColor}}" data-wssearchtitle="{{searchTitle}}" data-wssearchbodymaxchars="{{searchBodyMaxChars}}" data-wssearchminchars="{{searchMinChars}}">
+<section class="witsec-search noindex" plugins="witsec-search" data-bg-video="{{bg.type == 'video'&&bg.value.url}}" mbr-class="{'mbr-fullscreen': fullScreen, 'mbr-parallax-background': bg.parallax}" data-wssearchtitle="{{searchTitle}}" data-wssearchbodymaxchars="{{searchBodyMaxChars}}" data-wssearchminchars="{{searchMinChars}}">
   <mbr-parameters>
     <header><a href="#" onclick="mbrApp.alertDlg('Outside the search results you can use the following variables:<br><code>{searchString}</code> and <code>{searchTotal}</code><br><br>In the search results you can use the following:<br><code>{index}</code>, <code>{page}</code>, <code>{anchor}</code>, <code>{link}</code>, <code>{score}</code>, <code>{header}</code> and <code>{body}</code>')">Available Variables</a></header>
 
@@ -18,19 +18,21 @@
     </select>
     <input type="checkbox" title="Show Search Button" name="searchButton" checked>
     <input type="text" title="Placeholder" name="searchInput" value="Search" condition="searchButton">
-    <input type="text" title="Page Title" name="searchTitle" value="| Results for '{searchString}'">
+    <input type="text" title="Change Page Title" name="searchTitle" value="| Results for '{searchString}'">
     <input type="text" title="Minimum Search Word Length" name="searchMinChars" value="3">
-    <input type="text" title="Maximum Displayed Characters" name="searchBodyMaxChars" value="450">
-    <input type="checkbox" title="Highlight Results" name="searchHighlight" checked>
-    <input type="color" title="Highlight Color" name="searchHighlightColor" value="#ffe885" condition="searchHighlight">
     <input type="color" title="Error BG Color" name="bgColorError" value="#ff4a52">
+
+    <header>Search Results</header>
+    <input type="text" title="Max Displayed Body Characters" name="searchBodyMaxChars" value="450">
+    <input type="checkbox" title="Highlight Search String" name="searchHighlight" checked>
+    <input type="color" title="Highlight Color" name="searchHighlightColor" value="#ffe885" condition="searchHighlight">
+    <input type="checkbox" title="Bold Search String" name="searchHighlightBold">
 
     <header>Background</header>
     <fieldset type="background" name="bg" parallax>
         <input type="image" title="Image" value="../_images/background1.jpg">
         <input type="color" title="Color" value="#ffffff" selected>
     </fieldset>
-
     <input type="checkbox" title="Overlay" name="overlay" condition="bg.type !== 'color'" checked>
     <input type="color" title="Overlay Color" name="overlayColor" value="#ffffff" condition="overlay && bg.type !== 'color'">
     <input type="range" inline title="Opacity" name="overlayOpacity" min="0" max="1" step="0.1" value="0.7" condition="overlay && bg.type !== 'color'">
@@ -44,7 +46,7 @@
             <h3 class="mbr-section-title mbr-fonts-style align-center mb-4" mbr-if="showTitle" data-app-selector=".mbr-section-title" mbr-theme-style="display-5">
                 <b>Search this website</b></h3>
             <p class="mbr-section-text align-center mbr-fonts-style mb-4" mbr-if="showText" data-app-selector=".mbr-section-text" mbr-theme-style="display-7">
-                Enter one or more keywords in the field below and search away.<br>If you're curious to what the "database" looks like, <a href="assets/witsec-search/search.db" class="text-primary">click here</a>. It's a simple JSON file.</p>
+                Enter one or more keywords in the field below and search away.<br>If you're curious to what the "database" looks like, <a href="assets/witsec-search/search.json" class="text-primary">click here</a>. It's a simple JSON file.</p>
         </div>
     </div>
 
@@ -53,7 +55,7 @@
             <form class="mbr-form">
                 <div class="row input-group">
                     <div class="col-lg col-md col-12 mb-4">
-                        <input type="text" name="q" placeholder="{{searchInput}}" class="form-control wsSearchInput">
+                        <input type="text" name="q" placeholder="{{searchInput}}" class="form-control wsSearchInput" minlength="{{searchMinChars}}" required>
                     </div>
                     <div mbr-if="searchButton" class="mbr-section-btn col-md-auto col" mbr-buttons="true" mbr-theme-style="display-4" data-toolbar="-mbrBtnMove,-mbrLink,-mbrBtnRemove,-mbrBtnAdd"><a type="submit" class="btn btn-primary" data-app-placeholder="Type Text">Search</a></div>
                 </div>
@@ -75,7 +77,7 @@
           <div class="wsSearchResultTemplate mb-4">
             <p class="wsSearchResultTemplateHeader mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateHeader" mbr-theme-style="display-7">{index}.&nbsp;<a href="{link}" style="font-weight: bold;">{header}</a></p>
             <p class="wsSearchResultTemplateBody mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateBody" mbr-theme-style="display-7">
-              {body}<br><i>{page}</i></p>
+              {body}<br><a href="{link}" class="text-primary"><i>{page}</i></a></p>
           </div>
         </div>
 

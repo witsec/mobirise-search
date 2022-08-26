@@ -23,3 +23,20 @@
   text-align: center;
   background-color: @bgColorError;
 }
+
+mark {
+  padding: 0;
+  color: inherit;
+
+  & when not (@searchHighlight) {
+    background-color: inherit;
+  }
+
+  & when (@searchHighlight) {
+    background-color: @searchHighlightColor;
+  }
+
+  & when (@searchHighlightBold) {
+    font-weight: bold;
+  }
+}

@@ -75,8 +75,8 @@ function wsPerformSearch() {
 		// Don't search for words that are too short
 		wsQinternal = wsStripShortWords(wsQ);
 
-		// Something something
-		wsQinternal = wsIgnoreDiacritics(wsQinternal);
+		// Handle diacritics
+		wsQinternal = wsHandleDiacritics(wsQinternal);
 
 		// If nothing's left after stripping, we shouldn't perform a search
 		if (wsQinternal.length !== 0) {
@@ -177,14 +177,41 @@ function wsSearchShowError(err) {
 	document.querySelector(".witsec-search .wsSearchError").classList.remove("d-none");
 }
 
-// Replace diacritics with their 'normal' letters, then add those to the search (and deduplicate)
-function wsIgnoreDiacritics(str) {
-	const arr1 = str.split(" ");
-	const arr2 = arr1.map(function(str) { 
-		return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-	});
-	const arr3 = [...new Set([...arr1,...arr2])];
-	return arr3.join(" ").trim();
+// Remove diacritics, then add variants of letters, so it doesn't matter if you're using diacritics in your search string or not - it'll search for anything
+function wsHandleDiacritics(str) {
+	const dc = {
+		"a": ["à", "á", "â", "ã", "ä", "å", "ā", "ă", "ą"],
+		"c": ["ç", "ć", "ĉ", "ċ", "č"],
+		"d": ["ď"],
+		"e": ["è", "é", "ê", "ë", "ē", "ĕ", "ė", "ę", "ě"],
+		"g": ["ĝ", "ğ", "ġ", "ģ"],
+		"h": ["ĥ"],
+		"i": ["ì", "í", "î", "ï", "ĩ", "ī", "ĭ", "į"],
+		"j": ["ĵ"],
+		"k": ["ķ"],
+		"l": ["ĺ", "ļ", "ľ"],
+		"n": ["ñ", "ń", "ņ", "ň"],
+		"o": ["ò", "ó", "ô", "ö", "õ", "ō", "ŏ", "ő"],
+		"r": ["ŕ", "ŗ", "ř"],
+		"s": ["ś", "ŝ", "ş", "š"],
+		"t": ["ţ", "ť"],
+		"u": ["ù", "ú", "û", "ü", "ũ", "ů", "ū", "ŭ", "ű", "ų"],
+		"w": ["ŵ"],
+		"y": ["ý", "ÿ", "ŷ"],
+		"z": ["ź", "ż", "ž"]
+	};
+
+	// Replace any existing diacritics with their 'normal' counterpart
+	str = str.normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+
+	// Turn "lorem" into "l[o|ò|ó|ô|ö|õ|ō|ŏ|ő]rem". Not the most fancy way, but considering this runs on a client, it's fine
+	for (const key in dc) {
+		const r = "[" + key + "|" + dc[key].join("|") + "]";
+		const regex = new RegExp(key, "gi");
+		str = str.replace(regex, r);
+	}
+
+	return str;
 }
 
 // Cut off text if necessary
