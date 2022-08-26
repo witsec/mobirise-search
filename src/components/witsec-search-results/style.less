@@ -1,0 +1,25 @@
+& when not (@fullScreen) {
+  padding-top: (@paddingTop * 1rem);
+  padding-bottom: (@paddingBottom * 1rem);
+}
+
+& when (@bg-type = 'color') {
+  background-color: @bg-value;
+}
+
+& when (@bg-type = 'image') {
+  background-image: url(@bg-value);
+}
+
+.mbr-section-title {
+  text-align: center;
+}
+
+.mbr-section-text {
+  text-align: center;
+}
+
+.wsSearchError {
+  text-align: center;
+  background-color: @bgColorError;
+}

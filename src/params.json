@@ -1,0 +1,21 @@
+{
+    "name": "Search v1 - BETA-2",
+    "alias": "witsec-search",
+    "version": 1,
+    "minAppVersion": "4.10.17",
+    "components" : [
+		{
+            "path":"components/witsec-search-results",
+            "_group":"witsec",
+            "_isSecondary": true
+        }
+    ],
+    "plugins": [
+        "plugins"
+    ],
+    "ampCompatible": false,
+	"appScript": true,
+	"description":"This extension adds a simple search engine to your website. <a href='https://witsec.nl'>Learn more...</a>",
+    "largeCover": "cover.jpg",
+    "logo" : "thumbnail.jpg"
+}

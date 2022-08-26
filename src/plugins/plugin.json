@@ -1,0 +1,12 @@
+[
+    {
+        "name": "witsec-search",
+        "priority": 3000,
+        "files": [
+            {
+                "src" : "witsec-search/search.js",
+                "publishOnly" : true
+            }
+        ]
+    }
+]
