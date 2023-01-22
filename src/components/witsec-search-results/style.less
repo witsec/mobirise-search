@@ -19,6 +19,14 @@
   text-align: center;
 }
 
+button[type="submit"] when (@isRoundedButtons) {
+  border-radius: 100px;
+}
+
+a[type="submit"], button[type="submit"] {
+  margin-top: 0;
+}
+
 .wsSearchError {
   text-align: center;
   background-color: @bgColorError;
@@ -39,4 +47,13 @@ mark {
   & when (@searchHighlightBold) {
     font-weight: bold;
   }
+}
+
+.row .spinner-border, .row .spinner-grow {
+  width: 32px;
+  color: @searchSpinnerColor;
+}
+
+.gdpr-block {
+  display: none;
 }

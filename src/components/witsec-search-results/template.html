@@ -1,4 +1,4 @@
-<section class="witsec-search noindex" plugins="witsec-search" data-bg-video="{{bg.type == 'video'&&bg.value.url}}" mbr-class="{'mbr-fullscreen': fullScreen, 'mbr-parallax-background': bg.parallax}" data-wssearchtitle="{{searchTitle}}" data-wssearchbodymaxchars="{{searchBodyMaxChars}}" data-wssearchminchars="{{searchMinChars}}">
+<section class="witsec-search noindex" plugins="witsec-search" data-bg-video="{{bg.type == 'video'&&bg.value.url}}" mbr-class="{'mbr-fullscreen': fullScreen, 'mbr-parallax-background': bg.parallax}" data-wssearchtitle="{{searchTitle}}" data-wssearchbodymaxchars="{{searchBodyMaxChars}}" data-wssearchminchars="{{searchMinChars}}" data-wssearchspinner="{{searchSpinner}}" data-wssearchloadmore="{{searchLoadMore}}" data-wssearchloadmorebatch="{{searchLoadMoreBatch}}">
   <mbr-parameters>
     <header><a href="#" onclick="mbrApp.alertDlg('Outside the search results you can use the following variables:<br><code>{searchString}</code> and <code>{searchTotal}</code><br><br>In the search results you can use the following:<br><code>{index}</code>, <code>{page}</code>, <code>{anchor}</code>, <code>{link}</code>, <code>{score}</code>, <code>{header}</code> and <code>{body}</code>')">Available Variables</a></header>
 
@@ -22,11 +22,21 @@
     <input type="text" title="Minimum Search Word Length" name="searchMinChars" value="3">
     <input type="color" title="Error BG Color" name="bgColorError" value="#ff4a52">
 
+    <header>Loading Icon</header>
+    <input type="checkbox" title="Show Spinner" name="searchSpinner" checked>
+    <select name="searchSpinnerType" title="Type" condition="searchSpinner">
+      <option value="border" selected>Border</option>
+      <option value="grow">Grow</option>
+    </select>
+    <input type="color" name="searchSpinnerColor" title="Color" value="#4479d9" condition="searchSpinner">
+
     <header>Search Results</header>
     <input type="text" title="Max Displayed Body Characters" name="searchBodyMaxChars" value="450">
     <input type="checkbox" title="Highlight Search String" name="searchHighlight" checked>
-    <input type="color" title="Highlight Color" name="searchHighlightColor" value="#ffe885" condition="searchHighlight">
+    <input type="color" title="Highlight Color" name="searchHighlightColor" value="#ffe161" condition="searchHighlight">
     <input type="checkbox" title="Bold Search String" name="searchHighlightBold">
+    <input type="checkbox" title="Use 'Load More' Button" name="searchLoadMore" checked>
+    <input type="range" inline title="Batch Size" name="searchLoadMoreBatch" value="7" min="1" max="50" condition="searchLoadMore">
 
     <header>Background</header>
     <fieldset type="background" name="bg" parallax>
@@ -53,8 +63,8 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <form class="mbr-form">
-                <div class="row input-group">
-                    <div class="col-lg col-md col-12 mb-4">
+                <div class="row">
+                    <div class="col-lg col-md col-12">
                         <input type="text" name="q" placeholder="{{searchInput}}" class="form-control wsSearchInput" minlength="{{searchMinChars}}" required>
                     </div>
                     <div mbr-if="searchButton" class="mbr-section-btn col-md-auto col" mbr-buttons="true" mbr-theme-style="display-4" data-toolbar="-mbrBtnMove,-mbrLink,-mbrBtnRemove,-mbrBtnAdd"><a type="submit" class="btn btn-primary" data-app-placeholder="Type Text">Search</a></div>
@@ -63,10 +73,16 @@
         </div>
     </div>
 
-    <div class="row justify-content-center">
+    <div class="wsSearchSpinner row justify-content-center mt-4" mbr-if="searchSpinner" mbr-class="{'d-none': isPublish}">
+      <div class="spinner-{{searchSpinnerType}}">
+        <span class="sr-only"></span>
+      </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
       <div class="col-lg-{{searchResultsWidth}}">
-        <p class="wsSearchResultsFor mbr-fonts-style mt-3 mb-4" data-app-selector=".wsSearchResultsFor" mbr-theme-style="display-7" mbr-class="{'d-none': isPublish}">
-          Showing {searchTotal} result(s) for '{searchString}'.
+        <p class="wsSearchResultsFor mbr-fonts-style mb-4" data-app-selector=".wsSearchResultsFor" mbr-theme-style="display-7" mbr-class="{'d-none': isPublish}">
+          Found {searchTotal} result(s) for '{searchString}'.
         </p>
 
         <p class="wsSearchNoResults mbr-fonts-style mb-4" data-app-selector=".wsSearchNoResults" mbr-theme-style="display-7" mbr-class="{'d-none': isPublish}">
@@ -75,13 +91,16 @@
 
         <div class="wsSearchResults" mbr-class="{'d-none': isPublish}">
           <div class="wsSearchResultTemplate mb-4">
-            <p class="wsSearchResultTemplateHeader mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateHeader" mbr-theme-style="display-7">{index}.&nbsp;<a href="{link}" style="font-weight: bold;">{header}</a></p>
-            <p class="wsSearchResultTemplateBody mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateBody" mbr-theme-style="display-7">
-              {body}<br><a href="{link}" class="text-primary"><i>{page}</i></a></p>
+            <p class="wsSearchResultTemplateHeader mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateHeader" mbr-theme-style="display-7">{index}.&nbsp;<a href="{link}" style="font-weight: bold;">{header:This <mark>dummy</mark> header will be replaced.}</a></p>
+            <p class="wsSearchResultTemplateBody mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateBody" mbr-theme-style="display-7">{body:This is just some example text that helps you understand what your search results will look like. In this example, we're searching for the word '<mark>dummy</mark>', which is highlighted, if you have highlighting enabled. This body tag will be replaced with the actual body text of a search result, so you don't have to change this text.}<br><a href="{link}" class="text-primary"><i>{page:example.html}</i></a></p>
           </div>
         </div>
 
-        <div mbr-text class="wsSearchError mt-3 alert alert-danger col-12 mbr-fonts-style" mbr-theme-style="display-7" data-app-edit="content" data-app-selector=".wsSearchError" mbr-class="{'d-none': isPublish}">
+        <div class="wsSearchLoadMore" mbr-class="{'d-none': isPublish}" mbr-if="searchLoadMore">
+          <div class="mbr-section-btn col-md-auto col text-center" mbr-buttons="true" mbr-theme-style="display-4" data-toolbar="-mbrBtnMove,-mbrLink,-mbrBtnRemove,-mbrBtnAdd"><a class="btn wsSearchLoadMoreButton btn-primary" data-app-placeholder="Type Text">Load More</a></div>
+        </div>
+
+        <div mbr-text class="wsSearchError mt-4 alert alert-danger col-12 mbr-fonts-style" mbr-theme-style="display-7" data-app-edit="content" data-app-selector=".wsSearchError" mbr-class="{'d-none': isPublish}">
           An error occured. Please try again.</div>
       </div>
     </div>

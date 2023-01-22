@@ -2,6 +2,10 @@ let wsSearchDB = [];
 let wsScoreDB = [];
 let wsQ = null;
 let wsQinternal = null;
+let wsSearchResultsDiv = 0;
+let wsSearchResultsDivTotal = 0;
+let wsSearchLoadMore = false;
+let wsSearchLoadMoreBatch = 5;
 
 // Display the results to the page
 function wsDisplayResults() {
@@ -12,6 +16,10 @@ function wsDisplayResults() {
 		const searchTitle = (section.dataset.wssearchtitle || "");
 		document.title = document.title + " " + searchTitle.replace(/{searchString}/g, wsQ);
 
+		// Use 'load more'?
+		wsSearchLoadMore = (section.dataset.wssearchloadmore ? section.dataset.wssearchloadmore : false);
+		wsSearchLoadMoreBatch = (!isNaN(section.dataset.wssearchloadmorebatch) ? section.dataset.wssearchloadmorebatch : 5);
+
 		// Change search input
 		section.querySelector(".wsSearchInput").value = wsQ;
 
@@ -20,6 +28,7 @@ function wsDisplayResults() {
 			const noResults = section.querySelector(".wsSearchNoResults");
 			noResults.innerHTML = noResults.innerHTML.replace(/{searchString}/g, wsQ);
 			noResults.classList.remove("d-none");
+			wsToggleSpinner(false);
 			return true;
 		}
 
@@ -38,9 +47,9 @@ function wsDisplayResults() {
 		const template = section.querySelector(".wsSearchResultTemplate").outerHTML;
 
 		// Clear the results area
-		let searchResults = section.querySelector(".wsSearchResults");
-		searchResults.innerHTML = "";
-		searchResults.classList.remove("d-none");
+		wsSearchResults = section.querySelector(".wsSearchResults");
+		wsSearchResults.innerHTML = "";
+		wsSearchResults.classList.remove("d-none");
 
 		// Let's show the results now
 		wsScoreDB.forEach((entry, index) => {
@@ -53,17 +62,32 @@ function wsDisplayResults() {
 
 			// Replace all 'variables' with the value of this index
 			let res = template
-				.replace(/{index}/gm, index + 1)
-				.replace(/{page}/gm, entry.page)
+				.replace(/{index.*?}/gm, index + 1)
+				.replace(/{page.*?}/gm, entry.page)
 				.replace(/{anchor}/gm, entry.anchor)
 				.replace(/{link}/gm, entry.page + (entry.anchor ? "#" + entry.anchor : ""))
-				.replace(/{header}/gm, entry.header)
-				.replace(/{body}/gm, entry.body)
+				.replace(/{header.*?}/gm, entry.header)
+				.replace(/{body.*?}/gm, entry.body)
 				.replace(/{score}/gm, entry.score);
 
+			// Variable used to store the class of the block in (used with 'load more')
+			let blockClass = "";
+
+			// Determine search results block class (if enabled) - used with 'load more'
+			if (wsSearchLoadMore) {
+				wsSearchResultsDivTotal = Math.floor(index / wsSearchLoadMoreBatch);
+				blockClass = "wsSearchResultsBlock_" + wsSearchResultsDivTotal + (wsSearchResultsDivTotal > 0 ? " d-none" : "");
+			}
+
 			// Display the results
-			searchResults.innerHTML += res;
+			wsSearchResults.innerHTML += "<div class='" + blockClass + "'>" + res + "</div>";
 		});
+
+		// Display 'load more' button (if enabled)
+		wsShowLoadMore();
+
+		// Hide loading icon
+		wsToggleSpinner(false);
 	} catch(err) {
 		wsSearchShowError(err);
 	}
@@ -175,6 +199,7 @@ function wsGetParameterByName(name) {
 function wsSearchShowError(err) {
 	console.error("Search: " + err);
 	document.querySelector(".witsec-search .wsSearchError").classList.remove("d-none");
+	wsToggleSpinner(false);
 }
 
 // Remove diacritics, then add variants of letters, so it doesn't matter if you're using diacritics in your search string or not - it'll search for anything
@@ -250,6 +275,18 @@ function wsCutOffText(entry) {
 	return entry;
 }
 
+// Toggle the search spinner
+function wsToggleSpinner(show) {
+	const section = document.querySelector(".witsec-search");
+
+	if (section.dataset.wssearchtitle) {
+		if (show)
+			section.querySelector(".wsSearchSpinner").classList.remove("d-none");
+		else
+			section.querySelector(".wsSearchSpinner").classList.add("d-none");
+	}
+}
+
 // On local, use dummy data
 function wsDummySearch() {
 	wsQ = "lorem dummy";
@@ -283,6 +320,30 @@ function wsDummySearch() {
 
 	wsDisplayResults();
 }
+
+// Show 'load more' button and add listener
+function wsShowLoadMore() {
+	const section = document.querySelector(".witsec-search");
+
+	// If 'load more' is enabled and we have more than one results block
+	if (wsSearchLoadMore && wsSearchResultsDivTotal > 0) {
+		section.querySelector(".wsSearchLoadMore").classList.remove("d-none");
+		section.querySelector(".wsSearchLoadMoreButton").addEventListener("click", function() {
+			wsSearchResultsDiv += 1;
+			const blocks = section.querySelectorAll(".wsSearchResultsBlock_" + wsSearchResultsDiv);
+			for (const b of blocks)
+				b.classList.remove("d-none")
+
+			// Remove the 'load more' button if we've reached the end
+			if (wsSearchResultsDiv === wsSearchResultsDivTotal)
+				section.querySelector(".wsSearchLoadMore").classList.add("d-none");
+		});
+	}
+}
+
+// Display the spinner if needed - do this as soon as this gets
+if (wsGetParameterByName("q") !== null)
+	wsToggleSpinner(true);
 
 // When you're ready, let's go
 document.addEventListener("DOMContentLoaded", function(e) { 

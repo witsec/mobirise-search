@@ -11,6 +11,17 @@ defineM("witsec-search", function (g, mbrApp, TR) {
 				if (mbrApp.isAMP() || mbrApp.theme.type === "primary" )
 					return;
 
+				// On publish, make sure the latest version of the 'search.js' file is loaded
+                a.addFilter("publishHTML", function(b) {
+					var c = a.projectSettings["witsec-search"] || false;
+
+					if (c) {
+						b = b.replace(/"assets\/witsec-search\/search.js"/g, '"assets/witsec-search/search.js?v=1"');
+					}
+
+					return b
+				});
+
 				// Add site settings
 				a.addFilter("sidebarProjectSettings", function (b) {
 					const ws = a.projectSettings["witsec-search"] || false;
