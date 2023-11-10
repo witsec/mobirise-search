@@ -21,6 +21,7 @@
     <input type="text" title="Change Page Title" name="searchTitle" value="| Results for '{searchString}'">
     <input type="text" title="Minimum Search Word Length" name="searchMinChars" value="3">
     <input type="color" title="Error BG Color" name="bgColorError" value="#ff4a52">
+    <input type="text" title="Anchor (e.g. #anchorname, leave empty when unsure)" name="anchor" value="">
 
     <header>Loading Icon</header>
     <input type="checkbox" title="Show Spinner" name="searchSpinner" checked>
@@ -62,7 +63,7 @@
 
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <form class="mbr-form">
+            <form class="mbr-form" action="{{anchor}}">
                 <div class="row">
                     <div class="col-lg col-md col-12">
                         <input type="text" name="q" placeholder="{{searchInput}}" class="form-control wsSearchInput" minlength="{{searchMinChars}}" required>
@@ -91,8 +92,8 @@
 
         <div class="wsSearchResults" mbr-class="{'d-none': isPublish}">
           <div class="wsSearchResultTemplate mb-4">
-            <p class="wsSearchResultTemplateHeader mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateHeader" mbr-theme-style="display-7">{index}.&nbsp;<a href="{link}" style="font-weight: bold;">{header:This <mark>dummy</mark> header will be replaced.}</a></p>
-            <p class="wsSearchResultTemplateBody mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateBody" mbr-theme-style="display-7">{body:This is just some example text that helps you understand what your search results will look like. In this example, we're searching for the word '<mark>dummy</mark>', which is highlighted, if you have highlighting enabled. This body tag will be replaced with the actual body text of a search result, so you don't have to change this text.}<br><a href="{link}" class="text-primary"><i>{page:example.html}</i></a></p>
+            <p class="wsSearchResultTemplateHeader mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateHeader" mbr-theme-style="display-7">{index}.&nbsp;<a data-href="{link}" style="font-weight: bold;">{header:This <mark>dummy</mark> header will be replaced.}</a></p>
+            <p class="wsSearchResultTemplateBody mb-0 mbr-fonts-style" data-app-selector=".wsSearchResultTemplateBody" mbr-theme-style="display-7">{body:This is just some example text that helps you understand what your search results will look like. In this example, we're searching for the word '<mark>dummy</mark>', which is highlighted, if you have highlighting enabled. This body tag will be replaced with the actual body text of a search result, so you don't have to change this text.}<br><a data-href="{link}" class="text-primary"><i>{page:example.html}</i></a></p>
           </div>
         </div>
 

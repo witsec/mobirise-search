@@ -1,7 +1,7 @@
 {
-    "name": "Search v1",
+    "name": "Search v2",
     "alias": "witsec-search",
-    "version": 1,
+    "version": 2,
     "minAppVersion": "4.10.17",
     "components" : [
 		{

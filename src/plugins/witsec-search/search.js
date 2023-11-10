@@ -62,6 +62,7 @@ function wsDisplayResults() {
 
 			// Replace all 'variables' with the value of this index
 			let res = template
+				.replace(/data-href=/g, "href=")
 				.replace(/{index.*?}/gm, index + 1)
 				.replace(/{page.*?}/gm, entry.page)
 				.replace(/{anchor}/gm, entry.anchor)
